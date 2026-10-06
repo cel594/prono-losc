@@ -1,0 +1,30 @@
+{% extends 'base.html' %}{% block content %}
+<section class="admin-page">
+  <div class="section-head">
+    <div><span class="eyebrow">MON COMPTE</span><h1>Historique</h1></div>
+    <a class="btn outline" href="{{url_for('index')}}">← Retour aux matchs</a>
+  </div>
+  <div class="history-panel panel">
+    <div class="history-head"><div><h2>Tous mes pronostics</h2><p class="muted">Retrouve ton score pronostiqué, le résultat réel et les points obtenus.</p></div>
+    <div class="history-total"><span>POINTS GAGNÉS</span><strong>{{ predictions|sum(attribute='points_awarded') }}</strong></div></div>
+    {% if predictions %}
+    <div class="history-list">
+      {% for p in predictions %}
+      <article class="history-row">
+        <div class="history-match">
+          <span class="eyebrow">{{p['competition']}}</span>
+          <b>{{p['home']}} <em>vs</em> {{p['away']}}</b>
+          <small>{{p['match_date'].replace('T',' ')}}</small>
+        </div>
+        <div class="history-score"><span>TON PRONO</span><strong>{{p['home_score']}} — {{p['away_score']}}</strong></div>
+        <div class="history-score"><span>SCORE RÉEL</span>{% if p['real_home_score'] is not none %}<strong>{{p['real_home_score']}} — {{p['real_away_score']}}</strong>{% else %}<strong>—</strong>{% endif %}</div>
+        <div class="history-points {{ 'won' if p['points_awarded'] else 'none' }}">
+          {% if p['points_awarded'] %}<strong>+{{p['points_awarded']}}</strong><small>{% if p['home_score']==p['real_home_score'] and p['away_score']==p['real_away_score'] %}Score exact{% else %}Vainqueur trouvé{% endif %}</small>{% elif p['real_home_score'] is none %}<strong>—</strong><small>En attente</small>{% else %}<strong>0</strong><small>Pas de point</small>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}<div class="empty"><div>📜</div><h3>Aucun historique</h3><p>Tes pronostics enregistrés apparaîtront ici après ton premier match.</p></div>{% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% block content %}
+<section class="leaderboard-page">
+  <div class="section-head">
+    <div><span class="eyebrow">COMMUNAUTÉ</span><h1>Classement</h1><p class="muted">Compare les comptes selon les points ou la valeur de leur collection.</p></div>
+    <div class="sort-switch">
+      <a class="btn {{ 'primary' if sort=='points' else 'outline' }}" href="{{url_for('leaderboard', sort='points')}}">⭐ Points</a>
+      <a class="btn {{ 'primary' if sort=='cards' else 'outline' }}" href="{{url_for('leaderboard', sort='cards')}}">🃏 Cartes</a>
+    </div>
+  </div>
+  <div class="leaderboard panel">
+    <div class="leaderboard-head"><span>Rang</span><span>Joueur</span><span>Points</span><span>Cartes</span><span>Valeur</span></div>
+    {% for u in users %}
+    <article class="leader-row {% if loop.index <= 3 %}podium podium-{{loop.index}}{% endif %}">
+      <div class="rank-number">{% if loop.index==1 %}🥇{% elif loop.index==2 %}🥈{% elif loop.index==3 %}🥉{% else %}{{loop.index}}{% endif %}</div>
+      <div class="player-name"><b>{{u['username']}}</b><small>{{u['winning_predictions']}} bon{{'s' if u['winning_predictions']>1 else ''}} résultat{{'s' if u['winning_predictions']>1 else ''}}</small></div>
+      <strong>{{u['points']}}</strong>
+      <span>{{u['card_count']}}</span>
+      <span class="card-value">{{u['card_value']}}</span>
+    </article>
+    {% else %}
+    <div class="empty"><div>🏆</div><h3>Aucun joueur</h3><p>Les comptes créés apparaîtront ici.</p></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

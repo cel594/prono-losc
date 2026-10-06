@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% block content %}
+<section class="shop-page">
+  <div class="section-head">
+    <div><span class="eyebrow">MA COLLECTION</span><h1>Mes cartes</h1><p class="muted">{{collection_count}} / {{total_cards}} cartes débloquées sur le site.</p></div>
+    <a class="btn outline" href="{{url_for('shop')}}">Boutique →</a>
+  </div>
+
+  <div class="collection-summary">
+    <div class="collection-stat"><span>CARTES DÉBLOQUÉES</span><strong>{{collection_count}} / {{total_cards}}</strong></div>
+    <div class="collection-stat"><span>VALEUR COLLECTION</span><strong>{{collection_value}}</strong><small>3 homme · 2 femme · 1 réserve</small></div>
+    <div class="collection-stat pack-stat"><span>PACKS GRATUITS</span><strong>{{user['free_packs']}}</strong><small>+1 tous les 5 bons résultats</small></div>
+  </div>
+
+  {% if user['free_packs'] > 0 %}
+  <div class="panel pack-panel">
+    <div><span class="eyebrow">RÉCOMPENSE COLLECTION</span><h2>Tu as un pack gratuit</h2><p class="muted">Choisis une carte encore bloquée, parmi toutes les catégories, et débloque-la gratuitement.</p></div>
+    {% if available %}
+    <form action="{{url_for('open_pack')}}" method="post" class="pack-form">
+      <select name="card_id" required>
+        <option value="">Choisir une carte à débloquer…</option>
+        {% for c in available %}<option value="{{c['id']}}">{{c['name']}} — {{card_labels[c['category']]}}</option>{% endfor %}
+      </select>
+      <button class="btn primary">🎁 Ouvrir le pack</button>
+    </form>
+    {% else %}<p class="muted">Toutes les cartes du site sont déjà dans ta collection.</p>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="cards-grid">
+    {% for c in cards %}
+    <article class="player-card owned-card">
+      <div class="card-art"><img src="{{url_for('static',filename='cards/'+c['image'])}}" alt="{{c['name']}}" onerror="this.style.display='none';this.parentElement.classList.add('placeholder')"><span>{{c['name']}}</span></div>
+      <div class="card-info"><b>{{c['name']}}</b><span>{{card_labels[c['category']]}}</span></div>
+      <div class="owned-badge">✓ Débloquée · valeur {{3 if c['category']=='men' else 2 if c['category']=='women' else 1}}</div>
+    </article>
+    {% else %}
+    <div class="empty"><div>◇</div><h3>Ta collection est vide</h3><p>Va dans la boutique pour débloquer ta première carte.</p></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
